@@ -18,20 +18,19 @@ library(reticulate)
 
 ### Python Versions
 
-Reticulate binds to a local instance of Python when you either implicitly or when you call the import() function, but you can suggest your own Python instance/environment
+Reticulate binds to a local instance of Python when you either implicitly or when you call the import() function, but you can suggest your own Python instance/environment.  To unbind, you must restart R.
 
-To unbind, you must restart R.
 ```{r}
 #py_config() for information about the version on Python you are using and a list of other version on your system:
 py_config()
 
-#To find the default vertion of Python
+#To find the default version of Python
 Sys.which("python")
 
 #Or specify a version
 use_python("usf/local/bin/python")
 
-#or use a version in a virutal environment:
+#or use a version in a virtual environment:
 use_virualenv("environ")
 
 ```
@@ -55,7 +54,7 @@ virtualenv_create("r-reticulate")
 
 ```{r}
 #py_install()
-#py_install("pandas")
+py_install("pandas")
 
 #install within a virtual environment:
 #virtualenv_install("r-reticulate", "scipy")
@@ -67,17 +66,14 @@ use the import() function to import a Python module in R
 ```{r}
 pandas <- import("pandas")
 
-# install SciPy into a virtual environment
-virtualenv_install("r-reticulate", "scipy")
-
 #access functions of the module with #
-# pandas$date_range
+pandas$date_range
 
-# if you have a package installed on multiple instances of pytho, you can use use_virtualenv() to ensure that a specific virutalenv is utlized by reticulate:
-use_virtualenv("r-reticulate")
+# if you have a package installed on multiple instances of python, you can use use_virtualenv() to ensure that a specific virutalenv is utlized by reticulate:
+# use_virtualenv("r-reticulate")
 
 # import SciPy (will use "r-reticulate" as per call to use_virtualenv)
-scipy <- import("scipy")
+# scipy <- import("scipy")
 
 ```
 
@@ -89,10 +85,61 @@ Type "exit" to end
 ### Using a .py Python file in R studio
 - File -> New File -> Python Script
 
-### Problem-sovling with shell
+### Problem-sovling in terminal
 
 ```{r}
 
+
+```
+
+
+### Using Python in R Markdown
+
+To insert a Python code chunk: Insert -> Python.
+
+```{python}
+
+list= [11,22,33,44,55,66]
+
+print(list)
+
+```
+
+
+#### Communicating between Python and R
+
+You can communicate between Python and R (Rstudio v.2.1 and newer).  
+
+First, we will upload a dataset in R:
+
+```{r}
+
+flowers = iris
+
+```
+
+We can reference our R objects by preceding their name with "r."
+
+```{python}
+import pandas
+
+flowers_py = r.flowers
+
+
+
+```
+ 
+We can access our Python objects using py followed by $
+
+```{r}
+
+plot(py$flowers_py)
+
+```
+
+### Converting between Python and R
+
+```{r}
 
 ```
 
