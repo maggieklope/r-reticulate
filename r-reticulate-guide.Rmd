@@ -8,10 +8,22 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+### Reticulate
+
+Reticulate is an R package that allows for the interface between R and Python.  It lets you call Python within R and translate between R and Python.
+
+Upon the first install, reticulate will prompt you to download minconda in the console.  Enter Y to approve, or else you will have to use the install_miniconda() function.
+
+Useful Links:
+
+https://rstudio.github.io/reticulate/
+
+https://rstudio.com/resources/cheatsheets/
+
 
 ```{r, include=FALSE}
 
-#install.packages("reticulate")
+#cinstall.packages("reticulate")
 library(reticulate)
 
 ```
@@ -21,77 +33,57 @@ library(reticulate)
 Reticulate binds to a local instance of Python when you either implicitly or when you call the import() function, but you can suggest your own Python instance/environment.  To unbind, you must restart R.
 
 ```{r}
-#py_config() for information about the version on Python you are using and a list of other version on your system:
+# py_config() for information about the version on Python you are using and a list of other version on your system:
 py_config()
 
-#To find the default version of Python
+# To find the default version of Python Reticulate will use
 Sys.which("python")
 
-#Or specify a version
-use_python("usf/local/bin/python")
+# Or specify a version
+# use_python("usf/local/bin/python")
 
-#or use a version in a virtual environment:
-use_virualenv("environ")
-
-```
-
-### Using a virtual environment:
-
-```{r}
-#list available virtual environments
+# or use a version in a virtual environment:
+# list available virtual environments
 virtualenv_list()
 
-#Create new virtual environment
-virtualenv_create("r-reticulate")
+# use_virualenv("environ")
+
+# Can create new virtual environment
+# virtualenv_create("r-reticulate")
 
 ```
 
-### Installing python packages
-- method depends on environment
+### Installing & importing python packages
+
+- method depends on environment (virtual environment, conda, etc)
+  - py_install() if using python binary
+  - virtualenv_install() if using virtual environment
+  - conda_install() if using conda environment
 - can also use terminal:
-  1) nativage into your bin or virtual enviornment
+  1) navigate into your bin or virtual environment
   2) use pip install.  Ex: "pip install SciPy"
 
 ```{r}
-#py_install()
-py_install("pandas")
+# install pandas
+# conda_install(envname = "/home/klope/.local/share/r-miniconda", "pandas")
 
-#install within a virtual environment:
-#virtualenv_install("r-reticulate", "scipy")
+# import pandas (it will be automatically discovered in "r-miniconda")
+pd <- import("pandas")
 
-```
-
-### Importing Python Modules
-use the import() function to import a Python module in R
-```{r}
-pandas <- import("pandas")
-
-#access functions of the module with #
-pandas$date_range
-
-# if you have a package installed on multiple instances of python, you can use use_virtualenv() to ensure that a specific virutalenv is utlized by reticulate:
-# use_virtualenv("r-reticulate")
-
-# import SciPy (will use "r-reticulate" as per call to use_virtualenv)
-# scipy <- import("scipy")
+# how to check if a package is available for you to use:
+py_module_available("pandas")
 
 ```
 
 ### Testing python code in console
-Can use repl_python() in cosole, hit control+enter and run Python and view the results.
+
+Can use repl_python() in console, hit control+enter and run Python and view the results.
 Type Python code at the >>> and hit return to run
 Type "exit" to end
 
 ### Using a .py Python file in R studio
+
 - File -> New File -> Python Script
-
-### Problem-sovling in terminal
-
-```{r}
-
-
-```
-
 
 ### Using Python in R Markdown
 
@@ -99,33 +91,35 @@ To insert a Python code chunk: Insert -> Python.
 
 ```{python}
 
-list= [11,22,33,44,55,66]
+list = [11,22,33,44,55,66]
 
 print(list)
 
 ```
 
-
 #### Communicating between Python and R
 
 You can communicate between Python and R (Rstudio v.2.1 and newer).  
 
-First, we will upload a dataset in R:
+First, we will upload the iris dataset into R:
 
 ```{r}
 
-flowers = iris
+flowers <-  iris
 
 ```
 
 We can reference our R objects by preceding their name with "r."
 
 ```{python}
+
 import pandas
 
 flowers_py = r.flowers
 
+flowers_py_groups = flowers_py.groupby("Species")
 
+group_means = flowers_py_groups.mean()
 
 ```
  
@@ -133,13 +127,21 @@ We can access our Python objects using py followed by $
 
 ```{r}
 
-plot(py$flowers_py)
+plot(py$group_means)
 
 ```
 
 ### Converting between Python and R
 
+with r_to_py() and py_to_r()
+
+### Reading in python scripts
+
 ```{r}
 
+source_python('add.py')
+add(5, 10)
+
 ```
+
 
